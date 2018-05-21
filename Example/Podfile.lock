@@ -1,0 +1,16 @@
+PODS:
+  - ProxyResolver (0.1.0)
+
+DEPENDENCIES:
+  - ProxyResolver (from `../`)
+
+EXTERNAL SOURCES:
+  ProxyResolver:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  ProxyResolver: 84a21dca61451f530b92c1574efeb30d922ef2f1
+
+PODFILE CHECKSUM: 83d2fdc72278efd4831f9bbf5e193100d25c8d91
+
+COCOAPODS: 1.5.0

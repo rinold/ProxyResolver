@@ -1,0 +1,22 @@
+{
+  "name": "ProxyResolver",
+  "version": "0.1.0",
+  "summary": "A short description of ProxyResolver.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/rinold/ProxyResolver",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "rinold": "mihail.churbanov@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/rinold/ProxyResolver.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "osx": "10.10"
+  },
+  "source_files": "ProxyResolver/Classes/**/*"
+}

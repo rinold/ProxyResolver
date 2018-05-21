@@ -1,0 +1,590 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8986EC39490C81C2D8D74336C583EC5D /* ProxyResolver-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 82B89B81E2C0B7A18E8BA8C866413244 /* ProxyResolver-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A68EB223A289CC48A0408E9733A3BA91 /* Pods-ProxyResolver_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F8ABF926AA61668006F55BE1CE37B2FA /* Pods-ProxyResolver_Tests-dummy.m */; };
+		BDFA00143101BD16F1FDD42D41A2B2F6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF428FC7C7A6555B2B02D8E238C8D8F2 /* Cocoa.framework */; };
+		C82C6EFEFD7CC8DA2FD52059DB889C49 /* Pods-ProxyResolver_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4488644F212DC26BDECDAB00A19E5018 /* Pods-ProxyResolver_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D1FCBD77A1FF7DFAEA805D7B2AE1C96D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF428FC7C7A6555B2B02D8E238C8D8F2 /* Cocoa.framework */; };
+		DF3D62697BFAFF02BA7903B5FC8DCF46 /* ProxyResolver-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 69ECA608EDA5F7F53DAAB10C40B64396 /* ProxyResolver-dummy.m */; };
+		F55AF46DACB40F6E27EBCE3E6B9A1EE5 /* ProxyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290F267214720829226B81DA3F8E72D0 /* ProxyResolver.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		51FD30A51718EBACC5CA67B1DF7ED3F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 975D448524FFDAD24C92AAEC3F9C7712;
+			remoteInfo = ProxyResolver;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		04A997F3BEE997585804C1CECD68769C /* Pods-ProxyResolver_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ProxyResolver_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		06F847494D07A255D808DC3227958DF2 /* ProxyResolver.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; path = ProxyResolver.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		0954F6250043FD86AB3CE327C4F31DAB /* Pods-ProxyResolver_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ProxyResolver_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		0FC944C9E6603CECE2CAC9CBBD67F1B6 /* Pods-ProxyResolver_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-ProxyResolver_Tests.modulemap"; sourceTree = "<group>"; };
+		13D28F2E13EA381C5C25E4E849D7382C /* ProxyResolver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProxyResolver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		290F267214720829226B81DA3F8E72D0 /* ProxyResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProxyResolver.swift; path = ProxyResolver/Classes/ProxyResolver.swift; sourceTree = "<group>"; };
+		4488644F212DC26BDECDAB00A19E5018 /* Pods-ProxyResolver_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-ProxyResolver_Tests-umbrella.h"; sourceTree = "<group>"; };
+		61B4645F4AC22C21DBBE89FA110A81A3 /* Pods_ProxyResolver_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProxyResolver_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		69ECA608EDA5F7F53DAAB10C40B64396 /* ProxyResolver-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ProxyResolver-dummy.m"; sourceTree = "<group>"; };
+		6A49EE540D0F60FF1ACF68A4749C3F3E /* Pods-ProxyResolver_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-ProxyResolver_Tests-frameworks.sh"; sourceTree = "<group>"; };
+		6B9996A7A16E8C6B0E63D6D19D7A2ECE /* Pods-ProxyResolver_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-ProxyResolver_Tests-resources.sh"; sourceTree = "<group>"; };
+		717E68A4F3A6B52D7D1CEB5F2DC7A6BE /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		757A8CADE38E19D0EABB20FF9553C599 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		77B65CFDEA083AF7A9A9C920C247715F /* Pods-ProxyResolver_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-ProxyResolver_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		82B89B81E2C0B7A18E8BA8C866413244 /* ProxyResolver-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ProxyResolver-umbrella.h"; sourceTree = "<group>"; };
+		868D956146D2297AB73355E5DB10E162 /* ProxyResolver.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ProxyResolver.xcconfig; sourceTree = "<group>"; };
+		92222897C37AC943B012725BDB01A4B1 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9A9A352E5868B27F72B5008E7849DFDF /* Pods-ProxyResolver_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-ProxyResolver_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		B47B5886A3CDFE66749E0DB41C3F264F /* ProxyResolver.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = ProxyResolver.modulemap; sourceTree = "<group>"; };
+		B9C80F41C8BEF7BA832363793F055B13 /* ProxyResolver-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ProxyResolver-prefix.pch"; sourceTree = "<group>"; };
+		DF428FC7C7A6555B2B02D8E238C8D8F2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		F8ABF926AA61668006F55BE1CE37B2FA /* Pods-ProxyResolver_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-ProxyResolver_Tests-dummy.m"; sourceTree = "<group>"; };
+		FED035864107CFDF25935EAD10ABA165 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E13B7CD7B58636DA928D67A85A81C907 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDFA00143101BD16F1FDD42D41A2B2F6 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED4793605D4CF9C6E204C4E97F89E45F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1FCBD77A1FF7DFAEA805D7B2AE1C96D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		17A77EF4A942DE9FF65A7E736C07F0CE /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				757A8CADE38E19D0EABB20FF9553C599 /* LICENSE */,
+				06F847494D07A255D808DC3227958DF2 /* ProxyResolver.podspec */,
+				FED035864107CFDF25935EAD10ABA165 /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		1C916EE2E7BF037A70521857290D10B3 /* ProxyResolver */ = {
+			isa = PBXGroup;
+			children = (
+				290F267214720829226B81DA3F8E72D0 /* ProxyResolver.swift */,
+				17A77EF4A942DE9FF65A7E736C07F0CE /* Pod */,
+				A802541D8599C4578AEB25ADE416F9A6 /* Support Files */,
+			);
+			name = ProxyResolver;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		39E9EE8210D861DFD82346C1F5EB7218 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FA7AC8429882A95AA0810A9DCDED54FF /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5D1729875112885740CADB70E378228F /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1C916EE2E7BF037A70521857290D10B3 /* ProxyResolver */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				5D1729875112885740CADB70E378228F /* Development Pods */,
+				39E9EE8210D861DFD82346C1F5EB7218 /* Frameworks */,
+				A1FE60ACB5D1B58C4076942FAEB6CF59 /* Products */,
+				9D260DAB039AC85585B88820BDCBF1FE /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		9D260DAB039AC85585B88820BDCBF1FE /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D4AB9DDB1A3BF3EE5D9E9E079A613EB3 /* Pods-ProxyResolver_Tests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		A1FE60ACB5D1B58C4076942FAEB6CF59 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				61B4645F4AC22C21DBBE89FA110A81A3 /* Pods_ProxyResolver_Tests.framework */,
+				13D28F2E13EA381C5C25E4E849D7382C /* ProxyResolver.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A802541D8599C4578AEB25ADE416F9A6 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				92222897C37AC943B012725BDB01A4B1 /* Info.plist */,
+				B47B5886A3CDFE66749E0DB41C3F264F /* ProxyResolver.modulemap */,
+				868D956146D2297AB73355E5DB10E162 /* ProxyResolver.xcconfig */,
+				69ECA608EDA5F7F53DAAB10C40B64396 /* ProxyResolver-dummy.m */,
+				B9C80F41C8BEF7BA832363793F055B13 /* ProxyResolver-prefix.pch */,
+				82B89B81E2C0B7A18E8BA8C866413244 /* ProxyResolver-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/ProxyResolver";
+			sourceTree = "<group>";
+		};
+		D4AB9DDB1A3BF3EE5D9E9E079A613EB3 /* Pods-ProxyResolver_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				717E68A4F3A6B52D7D1CEB5F2DC7A6BE /* Info.plist */,
+				0FC944C9E6603CECE2CAC9CBBD67F1B6 /* Pods-ProxyResolver_Tests.modulemap */,
+				9A9A352E5868B27F72B5008E7849DFDF /* Pods-ProxyResolver_Tests-acknowledgements.markdown */,
+				77B65CFDEA083AF7A9A9C920C247715F /* Pods-ProxyResolver_Tests-acknowledgements.plist */,
+				F8ABF926AA61668006F55BE1CE37B2FA /* Pods-ProxyResolver_Tests-dummy.m */,
+				6A49EE540D0F60FF1ACF68A4749C3F3E /* Pods-ProxyResolver_Tests-frameworks.sh */,
+				6B9996A7A16E8C6B0E63D6D19D7A2ECE /* Pods-ProxyResolver_Tests-resources.sh */,
+				4488644F212DC26BDECDAB00A19E5018 /* Pods-ProxyResolver_Tests-umbrella.h */,
+				04A997F3BEE997585804C1CECD68769C /* Pods-ProxyResolver_Tests.debug.xcconfig */,
+				0954F6250043FD86AB3CE327C4F31DAB /* Pods-ProxyResolver_Tests.release.xcconfig */,
+			);
+			name = "Pods-ProxyResolver_Tests";
+			path = "Target Support Files/Pods-ProxyResolver_Tests";
+			sourceTree = "<group>";
+		};
+		FA7AC8429882A95AA0810A9DCDED54FF /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				DF428FC7C7A6555B2B02D8E238C8D8F2 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		835A3B7A7889BBE0B02A7C2381544A2C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8986EC39490C81C2D8D74336C583EC5D /* ProxyResolver-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F154DB0427E3CBBE2DFD6D233A247BBB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C82C6EFEFD7CC8DA2FD52059DB889C49 /* Pods-ProxyResolver_Tests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		975D448524FFDAD24C92AAEC3F9C7712 /* ProxyResolver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 108EF0622E0290D11CAAA8B41E27337F /* Build configuration list for PBXNativeTarget "ProxyResolver" */;
+			buildPhases = (
+				F10DEEE892CB35336693C9AFB4CD9C62 /* Sources */,
+				ED4793605D4CF9C6E204C4E97F89E45F /* Frameworks */,
+				835A3B7A7889BBE0B02A7C2381544A2C /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProxyResolver;
+			productName = ProxyResolver;
+			productReference = 13D28F2E13EA381C5C25E4E849D7382C /* ProxyResolver.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		DDEAED8B86768D68DE830B668A3B5020 /* Pods-ProxyResolver_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30945EE70D49E083D4FA6EBFAB6788BD /* Build configuration list for PBXNativeTarget "Pods-ProxyResolver_Tests" */;
+			buildPhases = (
+				B2D350DEBC10085526751B8825F257C0 /* Sources */,
+				E13B7CD7B58636DA928D67A85A81C907 /* Frameworks */,
+				F154DB0427E3CBBE2DFD6D233A247BBB /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4E33442239C1C40E72D71F77A5CD4087 /* PBXTargetDependency */,
+			);
+			name = "Pods-ProxyResolver_Tests";
+			productName = "Pods-ProxyResolver_Tests";
+			productReference = 61B4645F4AC22C21DBBE89FA110A81A3 /* Pods_ProxyResolver_Tests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0930;
+				LastUpgradeCheck = 0930;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = A1FE60ACB5D1B58C4076942FAEB6CF59 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DDEAED8B86768D68DE830B668A3B5020 /* Pods-ProxyResolver_Tests */,
+				975D448524FFDAD24C92AAEC3F9C7712 /* ProxyResolver */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B2D350DEBC10085526751B8825F257C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A68EB223A289CC48A0408E9733A3BA91 /* Pods-ProxyResolver_Tests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F10DEEE892CB35336693C9AFB4CD9C62 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF3D62697BFAFF02BA7903B5FC8DCF46 /* ProxyResolver-dummy.m in Sources */,
+				F55AF46DACB40F6E27EBCE3E6B9A1EE5 /* ProxyResolver.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4E33442239C1C40E72D71F77A5CD4087 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ProxyResolver;
+			target = 975D448524FFDAD24C92AAEC3F9C7712 /* ProxyResolver */;
+			targetProxy = 51FD30A51718EBACC5CA67B1DF7ED3F0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		740FA9757F2F1876EE366527FBD83161 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0954F6250043FD86AB3CE327C4F31DAB /* Pods-ProxyResolver_Tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Target Support Files/Pods-ProxyResolver_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MODULEMAP_FILE = "Target Support Files/Pods-ProxyResolver_Tests/Pods-ProxyResolver_Tests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		74C7C140DCE092A8E61C5B08E0045893 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 868D956146D2297AB73355E5DB10E162 /* ProxyResolver.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/ProxyResolver/ProxyResolver-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ProxyResolver/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/ProxyResolver/ProxyResolver.modulemap";
+				PRODUCT_MODULE_NAME = ProxyResolver;
+				PRODUCT_NAME = ProxyResolver;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		878CAFA10587D3A9C301344FF93E83BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 04A997F3BEE997585804C1CECD68769C /* Pods-ProxyResolver_Tests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Target Support Files/Pods-ProxyResolver_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MODULEMAP_FILE = "Target Support Files/Pods-ProxyResolver_Tests/Pods-ProxyResolver_Tests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		885072FBE917853E9C621EA32511C1DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		B4B1084888239C70511A640F10A4B868 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 868D956146D2297AB73355E5DB10E162 /* ProxyResolver.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/ProxyResolver/ProxyResolver-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ProxyResolver/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/ProxyResolver/ProxyResolver.modulemap";
+				PRODUCT_MODULE_NAME = ProxyResolver;
+				PRODUCT_NAME = ProxyResolver;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E574923E2959CFEF4FEBC7B272DBC6AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		108EF0622E0290D11CAAA8B41E27337F /* Build configuration list for PBXNativeTarget "ProxyResolver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74C7C140DCE092A8E61C5B08E0045893 /* Debug */,
+				B4B1084888239C70511A640F10A4B868 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				885072FBE917853E9C621EA32511C1DA /* Debug */,
+				E574923E2959CFEF4FEBC7B272DBC6AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		30945EE70D49E083D4FA6EBFAB6788BD /* Build configuration list for PBXNativeTarget "Pods-ProxyResolver_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				878CAFA10587D3A9C301344FF93E83BE /* Debug */,
+				740FA9757F2F1876EE366527FBD83161 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

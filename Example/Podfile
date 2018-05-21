@@ -1,0 +1,6 @@
+use_frameworks!
+target 'ProxyResolver_Tests' do
+  pod 'ProxyResolver', :path => '../'
+  
+  
+end
