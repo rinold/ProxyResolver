@@ -1,5 +1,5 @@
 import XCTest
-import ProxyResolver
+@testable import ProxyResolver
 
 class Tests: XCTestCase {
     
@@ -12,8 +12,17 @@ class Tests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
+
+    func testGetSystemConfigProxies() {
+        let proxy = ProxyResolver()
+        let config = proxy.getSystemConfigProxies(for: URL(string: "http://google.com")!)
+        XCTAssertNotNil(config)
+        let firstProxyConfig = config!.first
+        XCTAssertNotNil(firstProxyConfig)
+        XCTAssertTrue(firstProxyConfig!.keys.contains(kCFProxyTypeKey))
+    }
     
-    func testExample() {
+    func testDummyResolve() {
         // This is an example of a functional test case.
         let expectation = XCTestExpectation(description: "Completion called")
         let proxy = ProxyResolver()
@@ -22,13 +31,6 @@ class Tests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure() {
-            // Put the code you want to measure the time of here.
-        }
     }
     
 }
