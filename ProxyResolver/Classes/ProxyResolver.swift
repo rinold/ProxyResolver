@@ -67,21 +67,39 @@ public enum ProxyResolutionError: Error {
 public typealias ProxyResolutionCompletion = (ResolutionResult<Proxy>) -> Void
 public typealias ProxiesResolutionCompletion = (ResolutionResult<[Proxy]>) -> Void
 
+// MARK: - ProxyConfigProvide protocol
+
+public protocol ProxyConfigProvider {
+    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]?
+}
+
+class SystemProxyConfigProvider: ProxyConfigProvider {
+    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
+        guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
+        let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
+        return cfProxies as? [[CFString: AnyObject]]
+    }
+}
+
 // MARK: - ProxyResolver class
 
 public final class ProxyResolver {
 
+    private var configProvider: ProxyConfigProvider
     private let supportedAutoConfigUrlShemes = ["http", "https"]
     private let shemeNormalizationRules = ["ws": "http",
                                            "wss": "https"]
 
     // MARK: Public Methods
 
-    public init() {} // TODO: Configuration for properties above
+    // TODO: Configuration for properties above
+    public init() {
+        self.configProvider = SystemProxyConfigProvider()
+    }
 
     public func resolve(for url: URL, completion: @escaping ProxyResolutionCompletion) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = getSystemConfigProxies(for: normalizedUrl),
+        guard let proxiesConfig = configProvider.getSystemConfigProxies(for: normalizedUrl),
             let firstProxyConfig = proxiesConfig.first
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
@@ -118,10 +136,9 @@ public final class ProxyResolver {
 
     // MARK: Internal Methods
 
-    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
-        guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
-        let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
-        return cfProxies as? [[CFString: AnyObject]]
+    convenience init(configProvider: ProxyConfigProvider) {
+        self.init()
+        self.configProvider = configProvider
     }
 
     func resolveProxy(from config: [CFString: AnyObject], for url: URL,
