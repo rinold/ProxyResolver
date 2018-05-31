@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'ProxyResolver'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of ProxyResolver.'
+  s.summary          = 'Simple resolution of user proxy settings for macOS'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,9 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+  ProxyResolver allows simply resolve the actual proxy information from users
+  system configuration and could be used for setting up Stream-based connections,
+  for example for Web Sockets.
                        DESC
 
   s.homepage         = 'https://github.com/rinold/ProxyResolver'

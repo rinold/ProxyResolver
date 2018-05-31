@@ -67,9 +67,45 @@ public enum ProxyResolutionError: Error {
 public typealias ProxyResolutionCompletion = (ResolutionResult<Proxy>) -> Void
 public typealias ProxiesResolutionCompletion = (ResolutionResult<[Proxy]>) -> Void
 
+// MARK: - ProxyConfigProvide protocol
+
+protocol ProxyConfigProvider {
+    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]?
+}
+
+class SystemProxyConfigProvider: ProxyConfigProvider {
+    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
+        guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
+        let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
+        return cfProxies as? [[CFString: AnyObject]]
+    }
+}
+
+// MARK: - Network abstraction protocol
+
+protocol AutoConfigUrlFether {
+    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void)
+}
+
+class URLSessionFetcher: AutoConfigUrlFether {
+    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error)  in
+            if error == nil, let data = data, let scriptContents = String(data: data, encoding: .utf8) {
+                completion(scriptContents, nil)
+            } else {
+                completion(nil, error)
+            }
+        }
+        task.resume()
+    }
+}
+
 // MARK: - ProxyResolver class
 
-public class ProxyResolver {
+public final class ProxyResolver {
+
+    private var configProvider: ProxyConfigProvider
+    private var urlFetcher: AutoConfigUrlFether
 
     private let supportedAutoConfigUrlShemes = ["http", "https"]
     private let shemeNormalizationRules = ["ws": "http",
@@ -77,11 +113,15 @@ public class ProxyResolver {
 
     // MARK: Public Methods
 
-    public init() {} // TODO: Configuration for properties above
+    // TODO: Configuration for properties above
+    public init() {
+        configProvider = SystemProxyConfigProvider()
+        urlFetcher = URLSessionFetcher()
+    }
 
     public func resolve(for url: URL, completion: @escaping ProxyResolutionCompletion) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = getSystemConfigProxies(for: normalizedUrl),
+        guard let proxiesConfig = configProvider.getSystemConfigProxies(for: normalizedUrl),
             let firstProxyConfig = proxiesConfig.first
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
@@ -111,29 +151,20 @@ public class ProxyResolver {
         resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: tryNextOnErrorCompletion)
     }
 
-    public func resolveAll(for url: URL, completion: @escaping ProxiesResolutionCompletion) {
-        guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxies = getSystemConfigProxies(for: normalizedUrl) else { return }
-        //        resolveProxies(from: proxies, for: url, completion: completion)
-    }
+    // MARK: Internal Methods
 
-    // MARK: Private Methods
-
-    private func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
-        guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
-        let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
-        return cfProxies as? [[CFString: AnyObject]]
-    }
-
-    private func resolveProxies(from proxies: [CFDictionary], for url: URL, completion: @escaping ProxyResolutionCompletion) {
-        for proxyConfig in proxies.compactMap({ $0 as? [CFString: AnyObject] }) {
-            print (proxyConfig)
-            //            getProxy(from: proxyConfig, for: url)
+    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: AutoConfigUrlFether? = nil) {
+        self.init()
+        if let configProvider = configProvider {
+            self.configProvider = configProvider
+        }
+        if let urlFetcher = urlFetcher {
+            self.urlFetcher = urlFetcher
         }
     }
 
-    private func resolveProxy(from config: [CFString: AnyObject], for url: URL,
-                              completion: @escaping ProxyResolutionCompletion) {
+    func resolveProxy(from config: [CFString: AnyObject], for url: URL,
+                      completion: @escaping ProxyResolutionCompletion) {
 
         guard let proxyTypeValue = config[kCFProxyTypeKey] else {
             let error = ProxyResolutionError.unexpectedError(nil)
@@ -150,23 +181,51 @@ public class ProxyResolver {
         switch proxyType {
         case .autoConfigurationUrl:
             guard let cfAutoConfigUrl = config[kCFProxyAutoConfigurationURLKey],
-                let urlString = cfAutoConfigUrl as? String,
-                let scriptUrl = URL(string: urlString)
+                let scriptUrlString = cfAutoConfigUrl as? String,
+                let scriptUrl = URL(string: scriptUrlString)
             else {
+                // TODO: proper error handling
+                let error = ProxyResolutionError.unexpectedError(nil)
+                completion(.failure(error))
                 return
             }
             fetchPacScript(from: scriptUrl) { scriptContent, error in
-                guard let scriptContent = scriptContent else { return }
-                self.executePac(script: scriptContent, for: url)
+                guard let scriptContent = scriptContent else {
+                    // TODO: proper error handling
+                    let error = ProxyResolutionError.unexpectedError(nil)
+                    completion(.failure(error))
+                    return
+                }
+                // TODO: process all, first is for now
+                guard let pacProxyConfig = self.executePac(script: scriptContent, for: url)?.first else {
+                    // TODO: proper error handling
+                    let error = ProxyResolutionError.unexpectedError(nil)
+                    completion(.failure(error))
+                    return
+                }
+                // TODO: check if recursion here is possible?
+                self.resolveProxy(from: pacProxyConfig, for: url, completion: completion)
             }
 
         case .autoConfigurationScript:
             guard let cfAutoConfigScript = config[kCFProxyAutoConfigurationJavaScriptKey],
                 let scriptContent = cfAutoConfigScript as? String
             else {
+                // TODO: proper error handling
+                let error = ProxyResolutionError.unexpectedError(nil)
+                completion(.failure(error))
                 return
             }
-            executePac(script: scriptContent, for: url)
+            // TODO: process all, first is for now
+            // TODO: check if code for pac should be moved out (same used after pac fetch above)
+            guard let pacProxyConfig = self.executePac(script: scriptContent, for: url)?.first else {
+                // TODO: proper error handling
+                let error = ProxyResolutionError.unexpectedError(nil)
+                completion(.failure(error))
+                return
+            }
+            // TODO: check if recursion here is possible?
+            self.resolveProxy(from: pacProxyConfig, for: url, completion: completion)
 
         case .http, .https, .socks:
             guard let cfProxyHost = config[kCFProxyHostNameKey],
@@ -186,54 +245,36 @@ public class ProxyResolver {
         }
     }
 
-    private func fetchPacScript(from url: URL, completion: @escaping (String?, Error?) -> Void) {
+    func fetchPacScript(from url: URL, completion: @escaping (String?, Error?) -> Void) {
         if url.isFileURL, let scriptContents = try? String(contentsOfFile: url.absoluteString) {
             completion(scriptContents, nil)
             return
         }
 
-        guard let scheme = url.scheme?.lowercased(),
-            supportedAutoConfigUrlShemes.contains(scheme)
-        else {
+        guard let scheme = url.scheme?.lowercased(), supportedAutoConfigUrlShemes.contains(scheme) else {
             completion(nil, nil)
             return
         }
 
         let request = URLRequest(url: url)
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error)  in
-            if error == nil, let data = data, let scriptContents = String(data: data, encoding: .utf8) {
-                completion(scriptContents, nil)
-            } else {
-                completion(nil, error)
-            }
-        }
-        task.resume()
+        urlFetcher.fetch(request: request, completion: completion)
     }
 
-    private func executePac(script: String, for url: URL) {
-        // From: http://developer.apple.com/samplecode/CFProxySupportTool/listing1.html
-        // Work around <rdar://problem/5530166>. This dummy call to
-        // CFNetworkCopyProxiesForURL initialise some state within CFNetwork
-        // that is required by CFNetworkCopyProxiesForAutoConfigurationScript.
-        _ = CFNetworkCopyProxiesForURL(url as CFURL, NSDictionary()).takeRetainedValue()
-
+    func executePac(script: String, for url: URL) -> [[CFString: AnyObject]]? {
         var error: Unmanaged<CFError>?
         let proxiesCopy = CFNetworkCopyProxiesForAutoConfigurationScript(script as CFString, url as CFURL, &error)
         guard error == nil,
             let cfProxies = proxiesCopy?.takeRetainedValue(),
-            let proxies = cfProxies as? [CFDictionary]
+            let proxies = cfProxies as? [[CFString: AnyObject]]
         else {
-            return
+            return nil
         }
-
-        resolveProxies(from: proxies, for: url) { proxies in
-
-        }
+        return proxies
     }
 
-    // MARK: - Private Helper Methods
+    // MARK: - Helper Methods
 
-    private func urlWithNormalizedSheme(from url: URL) -> URL? {
+    func urlWithNormalizedSheme(from url: URL) -> URL? {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),
             let scheme = urlComponents.scheme
         else {
@@ -243,7 +284,7 @@ public class ProxyResolver {
         return urlComponents.url
     }
 
-    fileprivate class func getCredentials(for host: String) -> Credentials? {
+    class func getCredentials(for host: String) -> Credentials? {
         let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                     kSecAttrServer as String: host,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
