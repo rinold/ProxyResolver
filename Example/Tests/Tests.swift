@@ -91,13 +91,13 @@ class Tests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
 
-    func testAutoConfigurationUrlResolve() {
-        XCTAssert(false)
-    }
-
-    func testAutoConfigurationScriptResolve() {
-        XCTAssert(false)
-    }
+//    func testAutoConfigurationUrlResolve() {
+//        XCTAssert(false)
+//    }
+//
+//    func testAutoConfigurationScriptResolve() {
+//        XCTAssert(false)
+//    }
 
     func testHttpResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
