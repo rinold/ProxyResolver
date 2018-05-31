@@ -3,15 +3,6 @@ import XCTest
 
 class MockProxyConfigProvider: ProxyConfigProvider {
 
-    static let httpHost = "http.proxy.com"
-    static let httpPort = 8080
-
-    static let httpsHost = "https.proxy.com"
-    static let httpsPort = 8081
-
-    static let socksHost = "socks.proxy.com"
-    static let socksPort = 8082
-
     var testConfig: [[CFString : AnyObject]]?
 
     func setTestConfig(_ config: [[CFString : AnyObject]]?) {
@@ -22,35 +13,55 @@ class MockProxyConfigProvider: ProxyConfigProvider {
         return testConfig
     }
 
+}
+
+enum TestConfigs {
+
+    enum noProxy {
+        static let config = [[kCFProxyTypeKey: kCFProxyTypeNone]]
+    }
+
+    enum http {
+        static let host = "http.proxy.com"
+        static let port = 8080
+
+        static let config = [
+            [kCFProxyTypeKey: kCFProxyTypeHTTP,
+             kCFProxyHostNameKey: host as AnyObject,
+             kCFProxyPortNumberKey: port as AnyObject]
+        ]
+    }
+
+    enum https {
+        static let host = "http.proxy.com"
+        static let port = 8081
+
+        static let config = [
+            [kCFProxyTypeKey: kCFProxyTypeHTTPS,
+             kCFProxyHostNameKey: host as AnyObject,
+             kCFProxyPortNumberKey: port as AnyObject]
+        ]
+    }
+
+    enum socks {
+        static let host = "socks.proxy.com"
+        static let port = 8082
+
+        static let config = [
+            [kCFProxyTypeKey: kCFProxyTypeSOCKS,
+             kCFProxyHostNameKey: host as AnyObject,
+             kCFProxyPortNumberKey: port as AnyObject]
+        ]
+    }
 
 }
 
 class Tests: XCTestCase {
 
+    let testUrl = URL(string: "http://google.com")!
+
     var testConfigProvider: MockProxyConfigProvider!
     var proxy: ProxyResolver!
-
-    let testUrl = URL(string: "http://google.com")!
-    
-    let noProxyConfig = [[kCFProxyTypeKey: kCFProxyTypeNone]]
-
-    let httpProxyConfig = [
-        [kCFProxyTypeKey: kCFProxyTypeHTTP,
-         kCFProxyHostNameKey: MockProxyConfigProvider.httpHost as AnyObject,
-         kCFProxyPortNumberKey: MockProxyConfigProvider.httpPort as AnyObject]
-    ]
-
-    let httpsProxyConfig = [
-        [kCFProxyTypeKey: kCFProxyTypeHTTPS,
-         kCFProxyHostNameKey: MockProxyConfigProvider.httpsHost as AnyObject,
-         kCFProxyPortNumberKey: MockProxyConfigProvider.httpsPort as AnyObject]
-    ]
-
-    let socksProxyConfig = [
-        [kCFProxyTypeKey: kCFProxyTypeSOCKS,
-         kCFProxyHostNameKey: MockProxyConfigProvider.socksHost as AnyObject,
-         kCFProxyPortNumberKey: MockProxyConfigProvider.socksPort as AnyObject]
-    ]
 
     override func setUp() {
         super.setUp()
@@ -66,7 +77,7 @@ class Tests: XCTestCase {
 
     func testNoProxyResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
-        testConfigProvider.setTestConfig(noProxyConfig)
+        testConfigProvider.setTestConfig(TestConfigs.noProxy.config)
 
         proxy.resolve(for: testUrl) { result in
             switch result {
@@ -90,7 +101,7 @@ class Tests: XCTestCase {
 
     func testHttpResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
-        testConfigProvider.setTestConfig(httpProxyConfig)
+        testConfigProvider.setTestConfig(TestConfigs.http.config)
 
         let proxy = ProxyResolver(configProvider: testConfigProvider)
         let url = URL(string: "http://google.com")!
@@ -99,8 +110,8 @@ class Tests: XCTestCase {
             case .success(let proxy):
                 XCTAssertNotNil(proxy)
                 XCTAssert(.http == proxy!.type)
-                XCTAssert(MockProxyConfigProvider.httpHost == proxy!.host)
-                XCTAssert(MockProxyConfigProvider.httpPort == proxy!.port)
+                XCTAssert(TestConfigs.http.host == proxy!.host)
+                XCTAssert(TestConfigs.http.port == proxy!.port)
             case .failure(let error):
                 XCTFail(error.localizedDescription)
             }
@@ -111,15 +122,15 @@ class Tests: XCTestCase {
 
     func testHttpsResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
-        testConfigProvider.setTestConfig(httpsProxyConfig)
+        testConfigProvider.setTestConfig(TestConfigs.https.config)
 
         proxy.resolve(for: testUrl) { result in
             switch result {
             case .success(let proxy):
                 XCTAssertNotNil(proxy)
                 XCTAssert(.https == proxy!.type)
-                XCTAssert(MockProxyConfigProvider.httpsHost == proxy!.host)
-                XCTAssert(MockProxyConfigProvider.httpsPort == proxy!.port)
+                XCTAssert(TestConfigs.https.host == proxy!.host)
+                XCTAssert(TestConfigs.https.port == proxy!.port)
             case .failure(let error):
                 XCTFail(error.localizedDescription)
             }
@@ -130,15 +141,15 @@ class Tests: XCTestCase {
 
     func testSocksResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
-        testConfigProvider.setTestConfig(socksProxyConfig)
+        testConfigProvider.setTestConfig(TestConfigs.socks.config)
 
         proxy.resolve(for: testUrl) { result in
             switch result {
             case .success(let proxy):
                 XCTAssertNotNil(proxy)
                 XCTAssert(.socks == proxy!.type)
-                XCTAssert(MockProxyConfigProvider.socksHost == proxy!.host)
-                XCTAssert(MockProxyConfigProvider.socksPort == proxy!.port)
+                XCTAssert(TestConfigs.socks.host == proxy!.host)
+                XCTAssert(TestConfigs.socks.port == proxy!.port)
             case .failure(let error):
                 XCTFail(error.localizedDescription)
             }
