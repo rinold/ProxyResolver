@@ -47,8 +47,8 @@ let url = URL(string: "https://github.com")!
 > `Proxy.credentials` will automatically access `Proxy` keychain to retrieve configured for proxy account and password. As it would require permission from user the credentials are retrieved lazily only when you try to get them.
 
 ## Requirements
-- Swift: 4.0+
-- macOS: 10.0+
+- Swift: 4+
+- macOS: 10.10+
 
 ## Installation
 
