@@ -103,9 +103,7 @@ class Tests: XCTestCase {
         let expectation = XCTestExpectation(description: "Completion called")
         testConfigProvider.setTestConfig(TestConfigs.http.config)
 
-        let proxy = ProxyResolver(configProvider: testConfigProvider)
-        let url = URL(string: "http://google.com")!
-        proxy.resolve(for: url) { result in
+        proxy.resolve(for: testUrl) { result in
             switch result {
             case .success(let proxy):
                 XCTAssertNotNil(proxy)
