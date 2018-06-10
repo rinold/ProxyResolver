@@ -111,9 +111,11 @@ class Tests: XCTestCase {
 
         proxy.resolve(for: testUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNil(proxy)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(true)
+            case .proxy(let proxy):
+                XCTAssert(false, "Incorrect proxy connection resolved: \(proxy)")
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
@@ -127,12 +129,14 @@ class Tests: XCTestCase {
 
         proxy.resolve(for: testUrl) { result in
             switch result {
-            case .success(let proxy):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
                 XCTAssertNotNil(proxy)
-                XCTAssert(.http == proxy!.type)
-                XCTAssert(TestConfigs.autoConfigUrl.host == proxy!.host)
-                XCTAssert(TestConfigs.autoConfigUrl.port == proxy!.port)
-            case .failure(let error):
+                XCTAssert(.http == proxy.type)
+                XCTAssert(TestConfigs.autoConfigUrl.host == proxy.host)
+                XCTAssert(TestConfigs.autoConfigUrl.port == proxy.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
@@ -150,12 +154,13 @@ class Tests: XCTestCase {
 
         proxy.resolve(for: testUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNotNil(proxy)
-                XCTAssert(.http == proxy!.type)
-                XCTAssert(TestConfigs.http.host == proxy!.host)
-                XCTAssert(TestConfigs.http.port == proxy!.port)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(.http == proxy.type)
+                XCTAssert(TestConfigs.http.host == proxy.host)
+                XCTAssert(TestConfigs.http.port == proxy.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
@@ -169,12 +174,14 @@ class Tests: XCTestCase {
 
         proxy.resolve(for: testUrl) { result in
             switch result {
-            case .success(let proxy):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
                 XCTAssertNotNil(proxy)
-                XCTAssert(.https == proxy!.type)
-                XCTAssert(TestConfigs.https.host == proxy!.host)
-                XCTAssert(TestConfigs.https.port == proxy!.port)
-            case .failure(let error):
+                XCTAssert(.https == proxy.type)
+                XCTAssert(TestConfigs.https.host == proxy.host)
+                XCTAssert(TestConfigs.https.port == proxy.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
@@ -188,12 +195,14 @@ class Tests: XCTestCase {
 
         proxy.resolve(for: testUrl) { result in
             switch result {
-            case .success(let proxy):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
                 XCTAssertNotNil(proxy)
-                XCTAssert(.socks == proxy!.type)
-                XCTAssert(TestConfigs.socks.host == proxy!.host)
-                XCTAssert(TestConfigs.socks.port == proxy!.port)
-            case .failure(let error):
+                XCTAssert(.socks == proxy.type)
+                XCTAssert(TestConfigs.socks.host == proxy.host)
+                XCTAssert(TestConfigs.socks.port == proxy.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()

@@ -49,13 +49,12 @@ public struct Proxy {
     public var credentials: Credentials? {
         return ProxyResolver.getCredentials(for: host)
     }
-
-    public static let none = Proxy(type: .none, host: "", port: 0)
 }
 
-public enum ResolutionResult<ResultType> {
-    case success(ResultType?)
-    case failure(Error)
+public enum ProxyResolutionResult {
+    case direct
+    case proxy(Proxy)
+    case error(Error)
 }
 
 public enum ProxyResolutionError: Error {
@@ -63,9 +62,6 @@ public enum ProxyResolutionError: Error {
     case unexpectedError(Error?)
     case allFailed([Error])
 }
-
-public typealias ProxyResolutionCompletion = (ResolutionResult<Proxy>) -> Void
-public typealias ProxiesResolutionCompletion = (ResolutionResult<[Proxy]>) -> Void
 
 // MARK: - ProxyConfigProvide protocol
 
@@ -119,33 +115,32 @@ public final class ProxyResolver {
         urlFetcher = URLSessionFetcher()
     }
 
-    public func resolve(for url: URL, completion: @escaping ProxyResolutionCompletion) {
+    public func resolve(for url: URL, completion: @escaping (ProxyResolutionResult) -> Void) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
         guard let proxiesConfig = configProvider.getSystemConfigProxies(for: normalizedUrl),
             let firstProxyConfig = proxiesConfig.first
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
-            completion(.failure(error))
+            completion(.error(error))
             return
         }
         var i = 0
         var errors = [Error]()
-        var tryNextOnErrorCompletion: ProxyResolutionCompletion!
+        var tryNextOnErrorCompletion: ((ProxyResolutionResult) -> Void)!
         tryNextOnErrorCompletion = { result in
             i += 1
             switch result {
-            case .failure(let error):
+            case .error(let error):
                 errors.append(error)
                 guard i < proxiesConfig.count else {
                     let error = ProxyResolutionError.allFailed(errors)
-                    completion(.failure(error))
+                    completion(.error(error))
                     return
                 }
                 self.resolveProxy(from: proxiesConfig[i], for: normalizedUrl, completion: tryNextOnErrorCompletion)
-                return
-            case .success(let proxy):
-                completion(.success(proxy))
-                return
+
+            case .direct, .proxy:
+                completion(result)
             }
         }
         resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: tryNextOnErrorCompletion)
@@ -164,17 +159,17 @@ public final class ProxyResolver {
     }
 
     func resolveProxy(from config: [CFString: AnyObject], for url: URL,
-                      completion: @escaping ProxyResolutionCompletion) {
+                      completion: @escaping (ProxyResolutionResult) -> Void) {
 
         guard let proxyTypeValue = config[kCFProxyTypeKey] else {
             let error = ProxyResolutionError.unexpectedError(nil)
-            completion(.failure(error))
+            completion(.error(error))
             return
         }
         let cfProxyType = proxyTypeValue as! CFString
         guard let proxyType = ProxyType(from: cfProxyType) else {
             let error = ProxyResolutionError.proxyTypeUnsupported(cfProxyType as String)
-            completion(.failure(error))
+            completion(.error(error))
             return
         }
 
@@ -186,21 +181,21 @@ public final class ProxyResolver {
             else {
                 // TODO: proper error handling
                 let error = ProxyResolutionError.unexpectedError(nil)
-                completion(.failure(error))
+                completion(.error(error))
                 return
             }
             fetchPacScript(from: scriptUrl) { scriptContent, error in
                 guard let scriptContent = scriptContent else {
                     // TODO: proper error handling
                     let error = ProxyResolutionError.unexpectedError(nil)
-                    completion(.failure(error))
+                    completion(.error(error))
                     return
                 }
                 // TODO: process all, first is for now
                 guard let pacProxyConfig = self.executePac(script: scriptContent, for: url)?.first else {
                     // TODO: proper error handling
                     let error = ProxyResolutionError.unexpectedError(nil)
-                    completion(.failure(error))
+                    completion(.error(error))
                     return
                 }
                 // TODO: check if recursion here is possible?
@@ -213,7 +208,7 @@ public final class ProxyResolver {
             else {
                 // TODO: proper error handling
                 let error = ProxyResolutionError.unexpectedError(nil)
-                completion(.failure(error))
+                completion(.error(error))
                 return
             }
             // TODO: process all, first is for now
@@ -221,7 +216,7 @@ public final class ProxyResolver {
             guard let pacProxyConfig = self.executePac(script: scriptContent, for: url)?.first else {
                 // TODO: proper error handling
                 let error = ProxyResolutionError.unexpectedError(nil)
-                completion(.failure(error))
+                completion(.error(error))
                 return
             }
             // TODO: check if recursion here is possible?
@@ -234,14 +229,14 @@ public final class ProxyResolver {
                 let proxyPort = (cfProxyPort as? NSNumber)?.uint32Value
             else {
                 let error = ProxyResolutionError.unexpectedError(nil)
-                completion(.failure(error))
+                completion(.error(error))
                 return
             }
             let proxy = Proxy(type: proxyType, host: proxyHost, port: proxyPort)
-            completion(.success(proxy))
+            completion(.proxy(proxy))
 
         case .none:
-            completion(.success(nil))
+            completion(.direct)
         }
     }
 
