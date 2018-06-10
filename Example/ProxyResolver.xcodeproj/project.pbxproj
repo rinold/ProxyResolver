@@ -170,7 +170,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		AA569F9B1C91A3ECF05AA518 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -187,8 +187,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ProxyResolver_Tests/Pods-ProxyResolver_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "export EXPANDED_CODE_SIGN_IDENTITY=''\n\"${SRCROOT}/Pods/Target Support Files/Pods-ProxyResolver_Tests/Pods-ProxyResolver_Tests-frameworks.sh\"\n";
 		};
 		BACD943ED45F8CB33EDC0E0F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
