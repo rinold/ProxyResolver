@@ -17,11 +17,35 @@ class MockProxyConfigProvider: ProxyConfigProvider {
 
 }
 
+class MockProxyUrlFetcher: AutoConfigUrlFether {
+
+    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
+        let contents = """
+        function FindProxyForURL(url, host) {
+            return "PROXY \(TestConfigs.autoConfigUrl.host):\(TestConfigs.autoConfigUrl.port)";
+        }
+        """.trimmingCharacters(in: .whitespacesAndNewlines)
+        completion(contents, nil)
+    }
+
+}
+
 enum TestConfigs {
 
     // swiftlint:disable type_name
     enum noProxy {
         static let config = [[kCFProxyTypeKey: kCFProxyTypeNone]]
+    }
+
+    enum autoConfigUrl {
+        static let autoConfigUrl = "https://autoconf.server.com"
+        static let host = "auto-http.proxy.com"
+        static let port = 8000
+
+        static let config = [
+            [kCFProxyTypeKey: kCFProxyTypeAutoConfigurationURL,
+             kCFProxyAutoConfigurationURLKey: autoConfigUrl as AnyObject]
+        ]
     }
 
     enum http {
@@ -65,13 +89,15 @@ class Tests: XCTestCase {
     let testUrl = URL(string: "http://google.com")!
 
     var testConfigProvider: MockProxyConfigProvider!
+    var testUrlFetcher: MockProxyUrlFetcher!
     var proxy: ProxyResolver!
 
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         testConfigProvider = MockProxyConfigProvider()
-        proxy = ProxyResolver(configProvider: testConfigProvider)
+        testUrlFetcher = MockProxyUrlFetcher()
+        proxy = ProxyResolver(configProvider: testConfigProvider, urlFetcher: testUrlFetcher)
     }
 
     override func tearDown() {
@@ -95,10 +121,25 @@ class Tests: XCTestCase {
         wait(for: [expectation], timeout: 10.0)
     }
 
-//    func testAutoConfigurationUrlResolve() {
-//        XCTAssert(false)
-//    }
-//
+    func testAutoConfigurationUrlResolve() {
+        let expectation = XCTestExpectation(description: "Completion called")
+        testConfigProvider.setTestConfig(TestConfigs.autoConfigUrl.config)
+
+        proxy.resolve(for: testUrl) { result in
+            switch result {
+            case .success(let proxy):
+                XCTAssertNotNil(proxy)
+                XCTAssert(.http == proxy!.type)
+                XCTAssert(TestConfigs.autoConfigUrl.host == proxy!.host)
+                XCTAssert(TestConfigs.autoConfigUrl.port == proxy!.port)
+            case .failure(let error):
+                XCTFail(error.localizedDescription)
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+    }
+
 //    func testAutoConfigurationScriptResolve() {
 //        XCTAssert(false)
 //    }
