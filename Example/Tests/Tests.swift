@@ -1,15 +1,17 @@
 import XCTest
 @testable import ProxyResolver
 
+typealias ProxyConfigDict = [CFString: AnyObject]
+
 class MockProxyConfigProvider: ProxyConfigProvider {
 
-    var testConfig: [[CFString : AnyObject]]?
+    var testConfig: [ProxyConfigDict]?
 
-    func setTestConfig(_ config: [[CFString : AnyObject]]?) {
+    func setTestConfig(_ config: [ProxyConfigDict]?) {
         self.testConfig = config
     }
 
-    func getSystemConfigProxies(for url: URL) -> [[CFString : AnyObject]]? {
+    func getSystemConfigProxies(for url: URL) -> [ProxyConfigDict]? {
         return testConfig
     }
 
@@ -17,6 +19,7 @@ class MockProxyConfigProvider: ProxyConfigProvider {
 
 enum TestConfigs {
 
+    // swiftlint:disable type_name
     enum noProxy {
         static let config = [[kCFProxyTypeKey: kCFProxyTypeNone]]
     }
@@ -53,6 +56,7 @@ enum TestConfigs {
              kCFProxyPortNumberKey: port as AnyObject]
         ]
     }
+    // swiftlint:enable type_name
 
 }
 
@@ -69,7 +73,7 @@ class Tests: XCTestCase {
         testConfigProvider = MockProxyConfigProvider()
         proxy = ProxyResolver(configProvider: testConfigProvider)
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
@@ -155,6 +159,5 @@ class Tests: XCTestCase {
         }
         wait(for: [expectation], timeout: 10.0)
     }
-    
-}
 
+}
