@@ -80,7 +80,8 @@
 			children = (
 				1408906720CEB3E000AA9049 /* Types.swift */,
 			);
-			path = Internal;
+			name = Internal;
+			path = ProxyResolver/Classes/Internal;
 			sourceTree = "<group>";
 		};
 		17A77EF4A942DE9FF65A7E736C07F0CE /* Pod */ = {
