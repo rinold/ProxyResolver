@@ -8,32 +8,12 @@
 
 import Foundation
 
+// MARK: - Public Types
+
 public enum ProxyType {
-    case none
-    case autoConfigurationUrl
-    case autoConfigurationScript
     case http
     case https
     case socks
-
-    fileprivate init?(from cfProxyType: CFString) {
-        switch cfProxyType {
-        case kCFProxyTypeNone:
-            self = .none
-        case kCFProxyTypeAutoConfigurationURL:
-            self = .autoConfigurationUrl
-        case kCFProxyTypeAutoConfigurationJavaScript:
-            self = .autoConfigurationScript
-        case kCFProxyTypeHTTP:
-            self = .http
-        case kCFProxyTypeHTTPS:
-            self = .https
-        case kCFProxyTypeSOCKS:
-            self = .socks
-
-        default: return nil
-        }
-    }
 }
 
 public struct Credentials {
@@ -63,45 +43,12 @@ public enum ProxyResolutionError: Error {
     case allFailed([Error])
 }
 
-// MARK: - ProxyConfigProvide protocol
-
-protocol ProxyConfigProvider {
-    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]?
-}
-
-class SystemProxyConfigProvider: ProxyConfigProvider {
-    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
-        guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
-        let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
-        return cfProxies as? [[CFString: AnyObject]]
-    }
-}
-
-// MARK: - Network abstraction protocol
-
-protocol AutoConfigUrlFether {
-    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void)
-}
-
-class URLSessionFetcher: AutoConfigUrlFether {
-    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error)  in
-            if error == nil, let data = data, let scriptContents = String(data: data, encoding: .utf8) {
-                completion(scriptContents, nil)
-            } else {
-                completion(nil, error)
-            }
-        }
-        task.resume()
-    }
-}
-
 // MARK: - ProxyResolver class
 
 public final class ProxyResolver {
 
     private var configProvider: ProxyConfigProvider
-    private var urlFetcher: AutoConfigUrlFether
+    private var urlFetcher: URLFether
 
     private let supportedAutoConfigUrlShemes = ["http", "https"]
     private let shemeNormalizationRules = ["ws": "http",
@@ -148,7 +95,7 @@ public final class ProxyResolver {
 
     // MARK: Internal Methods
 
-    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: AutoConfigUrlFether? = nil) {
+    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: URLFether? = nil) {
         self.init()
         if let configProvider = configProvider {
             self.configProvider = configProvider
@@ -167,13 +114,13 @@ public final class ProxyResolver {
             return
         }
         let cfProxyType = proxyTypeValue as! CFString
-        guard let proxyType = ProxyType(from: cfProxyType) else {
+        guard let configProxyType = ConfigProxyType(from: cfProxyType) else {
             let error = ProxyResolutionError.proxyTypeUnsupported(cfProxyType as String)
             completion(.error(error))
             return
         }
 
-        switch proxyType {
+        switch configProxyType {
         case .autoConfigurationUrl:
             guard let cfAutoConfigUrl = config[kCFProxyAutoConfigurationURLKey],
                 let scriptUrlString = cfAutoConfigUrl as? String,
@@ -226,7 +173,8 @@ public final class ProxyResolver {
             guard let cfProxyHost = config[kCFProxyHostNameKey],
                 let proxyHost = cfProxyHost as? String,
                 let cfProxyPort = config[kCFProxyPortNumberKey],
-                let proxyPort = (cfProxyPort as? NSNumber)?.uint32Value
+                let proxyPort = (cfProxyPort as? NSNumber)?.uint32Value,
+                let proxyType = ProxyType(from: configProxyType)
             else {
                 let error = ProxyResolutionError.unexpectedError(nil)
                 completion(.error(error))
