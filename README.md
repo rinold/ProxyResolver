@@ -1,5 +1,6 @@
 # ProxyResolver
 
+![Swift](https://img.shields.io/badge/Swift-4.1-green.svg)
 [![CI Status](https://img.shields.io/travis/rinold/ProxyResolver.svg?style=flat)](https://travis-ci.org/rinold/ProxyResolver)
 [![Version](https://img.shields.io/cocoapods/v/ProxyResolver.svg?style=flat)](https://cocoapods.org/pods/ProxyResolver)
 [![License](https://img.shields.io/cocoapods/l/ProxyResolver.svg?style=flat)](https://cocoapods.org/pods/ProxyResolver)
