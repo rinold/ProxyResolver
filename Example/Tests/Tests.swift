@@ -133,7 +133,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testAutoConfigurationUrlResolve() {
@@ -153,7 +153,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testAutoConfigurationScriptResolve() {
@@ -173,7 +173,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testHttpResolve() {
@@ -193,7 +193,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testHttpsResolve() {
@@ -213,7 +213,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testSocksResolve() {
@@ -233,7 +233,7 @@ class Tests: XCTestCase {
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
 }
