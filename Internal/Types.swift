@@ -52,11 +52,7 @@ extension ProxyType {
 
 // MARK: - ProxyConfigProvide protocol
 
-protocol ProxyConfigProvider {
-    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]?
-}
-
-class SystemProxyConfigProvider: ProxyConfigProvider {
+final class SystemProxyConfigProvider: ProxyConfigProvider {
     func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]? {
         guard let systemSettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() else { return nil }
         let cfProxies = CFNetworkCopyProxiesForURL(url as CFURL, systemSettings).takeRetainedValue()
@@ -66,11 +62,7 @@ class SystemProxyConfigProvider: ProxyConfigProvider {
 
 // MARK: - Network abstraction protocol
 
-protocol URLFether {
-    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void)
-}
-
-class URLSessionFetcher: URLFether {
+final class URLSessionFetcher: ProxyScriptFether {
     func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error)  in
             if error == nil, let data = data, let scriptContents = String(data: data, encoding: .utf8) {

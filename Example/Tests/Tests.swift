@@ -17,7 +17,7 @@ class MockProxyConfigProvider: ProxyConfigProvider {
 
 }
 
-class MockProxyUrlFetcher: URLFether {
+class MockProxyUrlFetcher: ProxyScriptFether {
 
     func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
         let contents = """

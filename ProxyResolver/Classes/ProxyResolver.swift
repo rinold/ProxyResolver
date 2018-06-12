@@ -43,28 +43,50 @@ public enum ProxyResolutionError: Error {
     case allFailed([Error])
 }
 
+// MARK: - ProxyConfigProvide protocol
+
+public protocol ProxyConfigProvider {
+    func getSystemConfigProxies(for url: URL) -> [[CFString: AnyObject]]?
+}
+
+// MARK: - Network abstraction protocol
+
+public protocol ProxyScriptFether {
+    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void)
+}
+
+// MARK: - ProxyResolver configuration
+
+public final class ProxyResolverConfig {
+    public var configProvider: ProxyConfigProvider
+    public var scriptFetcher: ProxyScriptFether
+    public var supportedAutoConfigUrlShemes: [String]
+    public var shemeNormalizationRules: [String: String]
+
+    public init() {
+        configProvider = SystemProxyConfigProvider()
+        scriptFetcher = URLSessionFetcher()
+        supportedAutoConfigUrlShemes = ["http", "https"]
+        shemeNormalizationRules = ["ws": "http",
+                                   "wss": "https"]
+    }
+}
+
 // MARK: - ProxyResolver class
 
 public final class ProxyResolver {
 
-    private var configProvider: ProxyConfigProvider
-    private var urlFetcher: URLFether
-
-    private let supportedAutoConfigUrlShemes = ["http", "https"]
-    private let shemeNormalizationRules = ["ws": "http",
-                                           "wss": "https"]
+    private let config: ProxyResolverConfig
 
     // MARK: Public Methods
 
-    // TODO: Configuration for properties above
-    public init() {
-        configProvider = SystemProxyConfigProvider()
-        urlFetcher = URLSessionFetcher()
+    public init(config: ProxyResolverConfig = ProxyResolverConfig()) {
+        self.config = config
     }
 
     public func resolve(for url: URL, completion: @escaping (ProxyResolutionResult) -> Void) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = configProvider.getSystemConfigProxies(for: normalizedUrl),
+        guard let proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
             let firstProxyConfig = proxiesConfig.first
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
@@ -95,13 +117,13 @@ public final class ProxyResolver {
 
     // MARK: Internal Methods
 
-    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: URLFether? = nil) {
+    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: ProxyScriptFether? = nil) {
         self.init()
         if let configProvider = configProvider {
-            self.configProvider = configProvider
+            self.config.configProvider = configProvider
         }
         if let urlFetcher = urlFetcher {
-            self.urlFetcher = urlFetcher
+            self.config.scriptFetcher = urlFetcher
         }
     }
 
@@ -194,13 +216,13 @@ public final class ProxyResolver {
             return
         }
 
-        guard let scheme = url.scheme?.lowercased(), supportedAutoConfigUrlShemes.contains(scheme) else {
+        guard let scheme = url.scheme?.lowercased(), config.supportedAutoConfigUrlShemes.contains(scheme) else {
             completion(nil, nil)
             return
         }
 
         let request = URLRequest(url: url)
-        urlFetcher.fetch(request: request, completion: completion)
+        config.scriptFetcher.fetch(request: request, completion: completion)
     }
 
     func executePac(script: String, for url: URL) -> [[CFString: AnyObject]]? {
@@ -223,7 +245,7 @@ public final class ProxyResolver {
         else {
             return nil
         }
-        urlComponents.scheme = shemeNormalizationRules[scheme] ?? scheme
+        urlComponents.scheme = config.shemeNormalizationRules[scheme] ?? scheme
         return urlComponents.url
     }
 
