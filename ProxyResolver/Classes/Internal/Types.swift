@@ -1,9 +1,11 @@
 //
 //  Types.swift
-//  Pods-ProxyResolver_Tests
+//  ProxyResolver
 //
 //  Created by Mikhail Churbanov on 11/06/2018.
 //
+
+import Foundation
 
 enum ConfigProxyType {
     case none

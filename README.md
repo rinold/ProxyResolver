@@ -1,8 +1,10 @@
 # ProxyResolver
 
-![Swift](https://img.shields.io/badge/Swift-4.1-green.svg)
 [![CI Status](https://img.shields.io/travis/rinold/ProxyResolver.svg?style=flat)](https://travis-ci.org/rinold/ProxyResolver)
+![Swift](https://img.shields.io/badge/swift-4.1-green.svg)
 [![Version](https://img.shields.io/cocoapods/v/ProxyResolver.svg?style=flat)](https://cocoapods.org/pods/ProxyResolver)
+![Carthage](https://img.shields.io/badge/carthage-+-orange.svg)
+![Carthage](https://img.shields.io/badge/spm-+-orange.svg)
 [![License](https://img.shields.io/cocoapods/l/ProxyResolver.svg?style=flat)](https://cocoapods.org/pods/ProxyResolver)
 [![Platform](https://img.shields.io/cocoapods/p/ProxyResolver.svg?style=flat)](https://cocoapods.org/pods/ProxyResolver)
 
@@ -17,7 +19,7 @@ import ProxyResolver
 
 let proxy = ProxyResolver()
 let url = URL(string: "https://github.com")!
-  proxy.resolve(for: url) { result in
+proxy.resolve(for: url) { result in
   switch result {
     case .direct:
       // Direct connection allowed - no proxy required

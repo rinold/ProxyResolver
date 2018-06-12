@@ -1,6 +1,6 @@
 //
 //  ProxyResolver.swift
-//  ProxyConfig
+//  ProxyResolver
 //
 //  Created by Mikhail Churbanov on 16/04/2018.
 //  Copyright © 2018 Mikhail Churbanov. All rights reserved.
