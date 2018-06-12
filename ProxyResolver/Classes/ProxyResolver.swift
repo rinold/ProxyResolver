@@ -117,16 +117,6 @@ public final class ProxyResolver {
 
     // MARK: Internal Methods
 
-    convenience init(configProvider: ProxyConfigProvider? = nil, urlFetcher: ProxyScriptFether? = nil) {
-        self.init()
-        if let configProvider = configProvider {
-            self.config.configProvider = configProvider
-        }
-        if let urlFetcher = urlFetcher {
-            self.config.scriptFetcher = urlFetcher
-        }
-    }
-
     func resolveProxy(from config: [CFString: AnyObject], for url: URL,
                       completion: @escaping (ProxyResolutionResult) -> Void) {
 
@@ -167,7 +157,6 @@ public final class ProxyResolver {
                     completion(.error(error))
                     return
                 }
-                // TODO: check if recursion here is possible?
                 self.resolveProxy(from: pacProxyConfig, for: url, completion: completion)
             }
 
@@ -188,7 +177,6 @@ public final class ProxyResolver {
                 completion(.error(error))
                 return
             }
-            // TODO: check if recursion here is possible?
             self.resolveProxy(from: pacProxyConfig, for: url, completion: completion)
 
         case .http, .https, .socks:
@@ -209,6 +197,8 @@ public final class ProxyResolver {
             completion(.direct)
         }
     }
+
+    // MARK: - PAC resolution helper methods
 
     func fetchPacScript(from url: URL, completion: @escaping (String?, Error?) -> Void) {
         if url.isFileURL, let scriptContents = try? String(contentsOfFile: url.absoluteString) {
@@ -237,7 +227,7 @@ public final class ProxyResolver {
         return proxies
     }
 
-    // MARK: - Helper Methods
+    // MARK: - Helper methods
 
     func urlWithNormalizedSheme(from url: URL) -> URL? {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),

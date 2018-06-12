@@ -102,15 +102,17 @@ enum TestConfigs {
 class Tests: XCTestCase {
 
     var testConfigProvider: MockProxyConfigProvider!
-    var testUrlFetcher: MockProxyUrlFetcher!
+    var testScriptFetcher: MockProxyUrlFetcher!
     var proxy: ProxyResolver!
 
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         testConfigProvider = MockProxyConfigProvider()
-        testUrlFetcher = MockProxyUrlFetcher()
-        proxy = ProxyResolver(configProvider: testConfigProvider, urlFetcher: testUrlFetcher)
+        testScriptFetcher = MockProxyUrlFetcher()
+        let testConfig = ProxyResolverConfig()
+        testConfig.configProvider = testConfigProvider
+        testConfig.scriptFetcher = testScriptFetcher
+        proxy = ProxyResolver(config: testConfig)
     }
 
     override func tearDown() {
