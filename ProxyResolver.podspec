@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ProxyResolver'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'Simple resolution of user proxy settings for macOS'
 
 # This description is used to generate tags and improve search results.

@@ -1,24 +1,66 @@
 import XCTest
 @testable import ProxyResolver
 
+typealias ProxyConfigDict = [CFString: AnyObject]
+
 class MockProxyConfigProvider: ProxyConfigProvider {
 
-    var testConfig: [[CFString : AnyObject]]?
+    var testConfig: [ProxyConfigDict]?
 
-    func setTestConfig(_ config: [[CFString : AnyObject]]?) {
+    func setTestConfig(_ config: [ProxyConfigDict]?) {
         self.testConfig = config
     }
 
-    func getSystemConfigProxies(for url: URL) -> [[CFString : AnyObject]]? {
+    func getSystemConfigProxies(for url: URL) -> [ProxyConfigDict]? {
         return testConfig
+    }
+
+}
+
+class MockProxyUrlFetcher: ProxyScriptFether {
+
+    func fetch(request: URLRequest, completion: @escaping (String?, Error?) -> Void) {
+        let contents = """
+        function FindProxyForURL(url, host) {
+            return "PROXY \(TestConfigs.autoConfig.host):\(TestConfigs.autoConfig.port)";
+        }
+        """.trimmingCharacters(in: .whitespacesAndNewlines)
+        completion(contents, nil)
     }
 
 }
 
 enum TestConfigs {
 
+    static let timeout = 1.0
+
+    static let httpUrl = URL(string: "http://google.com")!
+    static let httpsUrl = URL(string: "https://google.com")!
+
+    // swiftlint:disable type_name
     enum noProxy {
         static let config = [[kCFProxyTypeKey: kCFProxyTypeNone]]
+    }
+
+    enum autoConfig {
+        static let scriptUrl = "https://autoconf.server.com"
+        static let scriptContents = """
+        function FindProxyForURL(url, host) {
+            return "PROXY \(autoConfig.host):\(autoConfig.port)";
+        }
+        """
+        static let host = "auto-http.proxy.com"
+        static let port = 8000
+
+        static let urlConfig = [
+            [kCFProxyTypeKey: kCFProxyTypeAutoConfigurationURL,
+             kCFProxyAutoConfigurationURLKey: scriptUrl as AnyObject]
+        ]
+
+        static let scriptConfig = [
+            [kCFProxyTypeKey: kCFProxyTypeAutoConfigurationJavaScript,
+             kCFProxyAutoConfigurationJavaScriptKey: scriptContents as AnyObject]
+        ]
     }
 
     enum http {
@@ -53,23 +95,26 @@ enum TestConfigs {
              kCFProxyPortNumberKey: port as AnyObject]
         ]
     }
+    // swiftlint:enable type_name
 
 }
 
 class Tests: XCTestCase {
 
-    let testUrl = URL(string: "http://google.com")!
-
     var testConfigProvider: MockProxyConfigProvider!
+    var testScriptFetcher: MockProxyUrlFetcher!
     var proxy: ProxyResolver!
 
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         testConfigProvider = MockProxyConfigProvider()
-        proxy = ProxyResolver(configProvider: testConfigProvider)
+        testScriptFetcher = MockProxyUrlFetcher()
+        let testConfig = ProxyResolverConfig()
+        testConfig.configProvider = testConfigProvider
+        testConfig.scriptFetcher = testScriptFetcher
+        proxy = ProxyResolver(config: testConfig)
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
@@ -79,82 +124,118 @@ class Tests: XCTestCase {
         let expectation = XCTestExpectation(description: "Completion called")
         testConfigProvider.setTestConfig(TestConfigs.noProxy.config)
 
-        proxy.resolve(for: testUrl) { result in
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNil(proxy)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(true)
+            case .proxy(let proxy):
+                XCTAssert(false, "Incorrect proxy connection resolved: \(proxy)")
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
-//    func testAutoConfigurationUrlResolve() {
-//        XCTAssert(false)
-//    }
-//
-//    func testAutoConfigurationScriptResolve() {
-//        XCTAssert(false)
-//    }
+    func testAutoConfigurationUrlResolve() {
+        let expectation = XCTestExpectation(description: "Completion called")
+        testConfigProvider.setTestConfig(TestConfigs.autoConfig.urlConfig)
+
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
+            switch result {
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(proxy.type == .http)
+                XCTAssert(proxy.host == TestConfigs.autoConfig.host)
+                XCTAssert(proxy.port == TestConfigs.autoConfig.port)
+            case .error(let error):
+                XCTFail(error.localizedDescription)
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: TestConfigs.timeout)
+    }
+
+    func testAutoConfigurationScriptResolve() {
+        let expectation = XCTestExpectation(description: "Completion called")
+        testConfigProvider.setTestConfig(TestConfigs.autoConfig.scriptConfig)
+
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
+            switch result {
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(proxy.type == .http)
+                XCTAssert(proxy.host == TestConfigs.autoConfig.host)
+                XCTAssert(proxy.port == TestConfigs.autoConfig.port)
+            case .error(let error):
+                XCTFail(error.localizedDescription)
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: TestConfigs.timeout)
+    }
 
     func testHttpResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
         testConfigProvider.setTestConfig(TestConfigs.http.config)
 
-        proxy.resolve(for: testUrl) { result in
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNotNil(proxy)
-                XCTAssert(.http == proxy!.type)
-                XCTAssert(TestConfigs.http.host == proxy!.host)
-                XCTAssert(TestConfigs.http.port == proxy!.port)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(proxy.type == .http)
+                XCTAssert(proxy.host == TestConfigs.http.host)
+                XCTAssert(proxy.port == TestConfigs.http.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testHttpsResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
         testConfigProvider.setTestConfig(TestConfigs.https.config)
 
-        proxy.resolve(for: testUrl) { result in
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNotNil(proxy)
-                XCTAssert(.https == proxy!.type)
-                XCTAssert(TestConfigs.https.host == proxy!.host)
-                XCTAssert(TestConfigs.https.port == proxy!.port)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(proxy.type == .https)
+                XCTAssert(proxy.host == TestConfigs.https.host)
+                XCTAssert(proxy.port == TestConfigs.https.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
 
     func testSocksResolve() {
         let expectation = XCTestExpectation(description: "Completion called")
         testConfigProvider.setTestConfig(TestConfigs.socks.config)
 
-        proxy.resolve(for: testUrl) { result in
+        proxy.resolve(for: TestConfigs.httpUrl) { result in
             switch result {
-            case .success(let proxy):
-                XCTAssertNotNil(proxy)
-                XCTAssert(.socks == proxy!.type)
-                XCTAssert(TestConfigs.socks.host == proxy!.host)
-                XCTAssert(TestConfigs.socks.port == proxy!.port)
-            case .failure(let error):
+            case .direct:
+                XCTAssert(false, "Incorrect direct connection resolved")
+            case .proxy(let proxy):
+                XCTAssert(proxy.type == .socks)
+                XCTAssert(proxy.host == TestConfigs.socks.host)
+                XCTAssert(proxy.port == TestConfigs.socks.port)
+            case .error(let error):
                 XCTFail(error.localizedDescription)
             }
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 10.0)
+        wait(for: [expectation], timeout: TestConfigs.timeout)
     }
-    
-}
 
+}

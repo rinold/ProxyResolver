@@ -2,5 +2,5 @@ language: swift
 osx_image: xcode9
 
 script:
-- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace Example/ProxyResolver.xcworkspace -scheme ProxyResolver-Example -sdk macosx test | xcpretty
+- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace Example/ProxyResolver.xcworkspace -scheme ProxyResolver-Tests -sdk macosx test | xcpretty
 - pod lib lint
