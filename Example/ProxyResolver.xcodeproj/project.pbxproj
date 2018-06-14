@@ -8,10 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		06DE4704FA0228CC2D9E3496 /* Pods_ProxyResolver_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B80EFBEC201C50284B711205 /* Pods_ProxyResolver_Tests.framework */; };
+		1408906D20D3108500AA9049 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1408906C20D3108500AA9049 /* Configuration.swift */; };
+		1408906F20D310D400AA9049 /* DelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1408906E20D310D400AA9049 /* DelegateTests.swift */; };
 		ED83F68F20348A760038D96B /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED83F68E20348A760038D96B /* Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1408906C20D3108500AA9049 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		1408906E20D310D400AA9049 /* DelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelegateTests.swift; sourceTree = "<group>"; };
 		347BF105EC759B79F24539B7 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8AAA4E47E0734EEDD4DDB5E6 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		8F80CD134F37EFDAAFA584F3 /* ProxyResolver.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ProxyResolver.podspec; path = ../ProxyResolver.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -66,7 +70,9 @@
 		ED83F68D20348A760038D96B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				1408906C20D3108500AA9049 /* Configuration.swift */,
 				ED83F68E20348A760038D96B /* Tests.swift */,
+				1408906E20D310D400AA9049 /* DelegateTests.swift */,
 				ED83F69020348A760038D96B /* Info.plist */,
 			);
 			path = Tests;
@@ -214,6 +220,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1408906F20D310D400AA9049 /* DelegateTests.swift in Sources */,
+				1408906D20D3108500AA9049 /* Configuration.swift in Sources */,
 				ED83F68F20348A760038D96B /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

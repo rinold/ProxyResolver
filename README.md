@@ -60,7 +60,7 @@ proxy.resolve(for: url) { result in
 > You can use custom proxy configuration provider instead of system one, or provide your own fetcher for downloading auto-configuration scripts instead of default one based on NSURLSession.
 
 - [ ] [In Progress] Aligned with Apple recommendations  
-> In general, you should try to download a URL using the first proxy in the array, try the second proxy if the first one fails, and so on.
+> "In general, you should try to download a URL using the first proxy in the array, try the second proxy if the first one fails, and so on." - as described in documentation for used  [CFNetworkCopyProxiesForURL](https://developer.apple.com/documentation/cfnetwork/1426639-cfnetworkcopyproxiesforurl) method.
 
 ## Requirements
 - Swift: 4+

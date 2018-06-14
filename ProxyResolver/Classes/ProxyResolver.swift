@@ -72,11 +72,21 @@ public final class ProxyResolverConfig {
     }
 }
 
+// MARK: - ProxyResolverDelegate protocol
+
+public protocol ProxyResolverDelegate: class {
+    func proxyResolver(_ proxyResolver: ProxyResolver, didFinish url: URL, with error: Error?)
+    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve url: URL, with result: ProxyResolutionResult,
+                       shouldResolveNext: @escaping (Bool) -> Void)
+}
+
 // MARK: - ProxyResolver class
 
 public final class ProxyResolver {
 
     private let config: ProxyResolverConfig
+
+    public weak var delegate: ProxyResolverDelegate?
 
     // MARK: Public Methods
 
@@ -113,6 +123,35 @@ public final class ProxyResolver {
             }
         }
         resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: tryNextOnErrorCompletion)
+    }
+
+    public func resolve(for url: URL) {
+        guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
+        guard let proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
+            let firstProxyConfig = proxiesConfig.first
+        else {
+            let error = ProxyResolutionError.unexpectedError(nil)
+            self.delegate?.proxyResolver(self, didFinish: url, with: error)
+            return
+        }
+        var i = 0
+        var resolveCompletion: ((ProxyResolutionResult) -> Void)!
+        let shouldResolveNextCallback: (Bool) -> Void = { shouldResolve in
+            guard shouldResolve else { return }
+            i += 1
+            guard i < proxiesConfig.count else {
+                self.delegate?.proxyResolver(self, didFinish: url, with: nil)
+                return
+            }
+            self.resolveProxy(from: proxiesConfig[i], for: normalizedUrl, completion: resolveCompletion)
+        }
+        resolveCompletion = { result in
+            self.delegate?.proxyResolver(self,
+                                         didResolve: url,
+                                         with: result,
+                                         shouldResolveNext: shouldResolveNextCallback)
+        }
+        resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: resolveCompletion)
     }
 
     // MARK: Internal Methods
