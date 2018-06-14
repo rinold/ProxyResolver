@@ -96,54 +96,50 @@ public final class ProxyResolver {
 
     public func resolve(for url: URL, completion: @escaping (ProxyResolutionResult) -> Void) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
-            let firstProxyConfig = proxiesConfig.first
+        guard var proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
+            !proxiesConfig.isEmpty
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
             completion(.error(error))
             return
         }
-        var i = 0
         var errors = [Error]()
         var tryNextOnErrorCompletion: ((ProxyResolutionResult) -> Void)!
         tryNextOnErrorCompletion = { result in
-            i += 1
             switch result {
             case .error(let error):
                 errors.append(error)
-                guard i < proxiesConfig.count else {
+                guard !proxiesConfig.isEmpty else {
                     let error = ProxyResolutionError.allFailed(errors)
                     completion(.error(error))
                     return
                 }
-                self.resolveProxy(from: proxiesConfig[i], for: normalizedUrl, completion: tryNextOnErrorCompletion)
+                self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: tryNextOnErrorCompletion)
 
             case .direct, .proxy:
                 completion(result)
             }
         }
-        resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: tryNextOnErrorCompletion)
+        resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: tryNextOnErrorCompletion)
     }
 
     public func resolve(for url: URL) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
-            let firstProxyConfig = proxiesConfig.first
+        guard var proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
+            !proxiesConfig.isEmpty
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
             self.delegate?.proxyResolver(self, didFinish: url, with: error)
             return
         }
-        var i = 0
+
         var resolveCompletion: ((ProxyResolutionResult) -> Void)!
         let shouldResolveNextCallback: (Bool) -> Void = { shouldResolve in
-            guard shouldResolve else { return }
-            i += 1
-            guard i < proxiesConfig.count else {
+            guard shouldResolve, !proxiesConfig.isEmpty else {
                 self.delegate?.proxyResolver(self, didFinish: url, with: nil)
                 return
             }
-            self.resolveProxy(from: proxiesConfig[i], for: normalizedUrl, completion: resolveCompletion)
+            self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
         }
         resolveCompletion = { result in
             self.delegate?.proxyResolver(self,
@@ -151,7 +147,7 @@ public final class ProxyResolver {
                                          with: result,
                                          shouldResolveNext: shouldResolveNextCallback)
         }
-        resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: resolveCompletion)
+        resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
     }
 
     // MARK: Internal Methods
