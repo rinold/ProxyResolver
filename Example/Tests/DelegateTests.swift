@@ -58,41 +58,32 @@ class DelegateTests: XCTestCase {
     }
 
     func testNoProxyResolve() {
+        continueAfterFailure = false
         let resolveExpectation = XCTestExpectation(description: "didResolve called")
         let stopExpectation = XCTestExpectation(description: "didStop called")
+        let expectedResult1 = ProxyResolutionResult.direct
+        let expectedResult2 = ProxyResolutionResult.proxy(TestConfigs.http.proxy)
         testDelegate.didResolveExpectation = resolveExpectation
         testDelegate.didStopExpectation = stopExpectation
-
-        var config = TestConfigs.http.config
-        config.append(TestConfigs.noProxy.config[0])
+        var config = TestConfigs.noProxy.config
+        config.append(TestConfigs.http.config[0])
         testConfigProvider.setTestConfig(config)
 
         proxy.resolve(for: TestConfigs.httpUrl)
+
         wait(for: [resolveExpectation], timeout: TestConfigs.timeout)
         XCTAssertNotNil(testDelegate.resolveUrl)
         XCTAssert(testDelegate.resolveUrl! == TestConfigs.httpUrl)
-        XCTAssertNotNil(testDelegate.resolveResult)
-        switch testDelegate.resolveResult! {
-        case .error(let error):
-            XCTAssert(false, "Resulted with error: \(error)")
-
-        default:
-            break
-        }
+        XCTAssert(testDelegate.resolveResult!.isSameSuccessfull(as: expectedResult1))
         XCTAssertNotNil(testDelegate.resolveNextRoutine)
 
         testDelegate.resolveNextRoutine!()
+
         wait(for: [resolveExpectation], timeout: TestConfigs.timeout)
         XCTAssertNotNil(testDelegate.resolveUrl)
         XCTAssert(testDelegate.resolveUrl! == TestConfigs.httpUrl)
-        XCTAssertNotNil(testDelegate.resolveResult)
-        switch testDelegate.resolveResult! {
-        case .error(let error):
-            XCTAssert(false, "Resulted with error: \(error)")
-
-        default:
-            break
-        }
+        XCTAssert(testDelegate.resolveResult!.isSameSuccessfull(as: expectedResult2))
+        XCTAssertNil(testDelegate.resolveNextRoutine)
     }
 
 }

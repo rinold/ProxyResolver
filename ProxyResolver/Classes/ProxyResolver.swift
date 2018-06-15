@@ -151,10 +151,11 @@ public final class ProxyResolver {
             self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
         }
         resolveCompletion = { result in
+            let resolveNext = (proxiesConfig.count < 1) ? nil : resolveNextRoutine
             self.delegate?.proxyResolver(self,
                                          didResolve: result,
                                          for: url,
-                                         resolveNext: resolveNextRoutine)
+                                         resolveNext: resolveNext)
         }
         resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
     }
