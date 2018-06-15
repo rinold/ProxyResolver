@@ -14,31 +14,21 @@ class TestDelegate: ProxyResolverDelegate {
     var didStopExpectation: XCTestExpectation?
     var didResolveExpectation: XCTestExpectation?
 
-    var resolveNext: ((Bool) -> Void)?
     var resolveUrl: URL?
     var resolveResult: ProxyResolutionResult?
-    var stopUrl: URL?
-    var stopError: Error?
+    var resolveNextRoutine: ResolveNextRoutine?
 
-    func proxyResolver(_ proxyResolver: ProxyResolver, didFinish url: URL, with error: Error?) {
-        stopUrl = url
-        stopError = error
-        didStopExpectation?.fulfill()
-    }
-
-    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve url: URL, with result: ProxyResolutionResult,
-                       shouldResolveNext: @escaping (Bool) -> Void) {
+    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve result: ProxyResolutionResult, for url: URL,
+                       resolveNext: ResolveNextRoutine?) {
         resolveUrl = url
         resolveResult = result
-        resolveNext = shouldResolveNext
+        resolveNextRoutine = resolveNext
         didResolveExpectation?.fulfill()
     }
 
     func clearResults() {
         resolveUrl = nil
         resolveResult = nil
-        stopUrl = nil
-        stopError = nil
     }
 
 }
@@ -89,9 +79,9 @@ class DelegateTests: XCTestCase {
         default:
             break
         }
-        XCTAssertNotNil(testDelegate.resolveNext)
+        XCTAssertNotNil(testDelegate.resolveNextRoutine)
 
-        testDelegate.resolveNext!(true)
+        testDelegate.resolveNextRoutine!()
         wait(for: [resolveExpectation], timeout: TestConfigs.timeout)
         XCTAssertNotNil(testDelegate.resolveUrl)
         XCTAssert(testDelegate.resolveUrl! == TestConfigs.httpUrl)
@@ -103,12 +93,6 @@ class DelegateTests: XCTestCase {
         default:
             break
         }
-
-        testDelegate.resolveNext!(true)
-        wait(for: [stopExpectation], timeout: TestConfigs.timeout)
-        XCTAssertNotNil(testDelegate.stopUrl)
-        XCTAssert(testDelegate.stopUrl! == TestConfigs.httpUrl)
-        XCTAssertNil(testDelegate.stopError)
     }
 
 }

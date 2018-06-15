@@ -31,6 +31,13 @@ public struct Proxy {
     }
 }
 
+// TODO: Swift 4.2 should have it auto-generated
+extension Proxy: Equatable {
+    public static func == (lhs: Proxy, rhs: Proxy) -> Bool {
+        return lhs.type == rhs.type && lhs.host == rhs.host && lhs.port == rhs.port
+    }
+}
+
 public enum ProxyResolutionResult {
     case direct
     case proxy(Proxy)
@@ -74,10 +81,11 @@ public final class ProxyResolverConfig {
 
 // MARK: - ProxyResolverDelegate protocol
 
+public typealias ResolveNextRoutine = () -> Void
+
 public protocol ProxyResolverDelegate: class {
-    func proxyResolver(_ proxyResolver: ProxyResolver, didFinish url: URL, with error: Error?)
-    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve url: URL, with result: ProxyResolutionResult,
-                       shouldResolveNext: @escaping (Bool) -> Void)
+    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve result: ProxyResolutionResult, for url: URL,
+                       resolveNext: ResolveNextRoutine?)
 }
 
 // MARK: - ProxyResolver class
@@ -129,23 +137,24 @@ public final class ProxyResolver {
             !proxiesConfig.isEmpty
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
-            self.delegate?.proxyResolver(self, didFinish: url, with: error)
+            let result = ProxyResolutionResult.error(error)
+            self.delegate?.proxyResolver(self,
+                                         didResolve: result,
+                                         for: url,
+                                         resolveNext: nil)
             return
         }
 
         var resolveCompletion: ((ProxyResolutionResult) -> Void)!
-        let shouldResolveNextCallback: (Bool) -> Void = { shouldResolve in
-            guard shouldResolve, !proxiesConfig.isEmpty else {
-                self.delegate?.proxyResolver(self, didFinish: url, with: nil)
-                return
-            }
+        let resolveNextRoutine: ResolveNextRoutine = {
+            guard !proxiesConfig.isEmpty else { return }
             self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
         }
         resolveCompletion = { result in
             self.delegate?.proxyResolver(self,
-                                         didResolve: url,
-                                         with: result,
-                                         shouldResolveNext: shouldResolveNextCallback)
+                                         didResolve: result,
+                                         for: url,
+                                         resolveNext: resolveNextRoutine)
         }
         resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
     }
