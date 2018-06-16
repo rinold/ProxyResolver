@@ -52,7 +52,7 @@ proxy.resolve(for: url) { result in
 \*  due to ATS protection auto-configuration url should be HTTPS or have  \*.local or unresolvable globally domain, otherwise you will need to set the `NSAllowsLocalNetworking` key in plist. More info could be found in [NSAppTransportSecurity reference](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33).
 
 
-#### Other (TBD)
+#### Other features
 - [x] Proxy with required password support  
 
 `Proxy.credentials` will automatically access `Proxy` keychain to retrieve configured for proxy account and password. As it would require permission from user the credentials are retrieved lazily only when you try to get them.
@@ -104,24 +104,67 @@ TBD
 
 ## Installation
 
-ProxyResolver is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+#### [CocoaPods](https://cocoapods.org)
+To install it add the following line to `Podfile`:
 
 ```ruby
 pod 'ProxyResolver'
 ```
 
-Using [Carthage]() add following line to your Cartfile:
-
+For example:
 ```ruby
+use_frameworks!
+
+target 'TestPackagesForProxyResolver' do
+  platform :osx, '10.12'
+  pod 'ProxyResolver'
+end
+```
+
+#### [Carthage](https://github.com/Carthage)
+To install it add following line to `Cartfile`:
+
+```
 GitHub "rinold/ProxyResolver"
 ```
 
+#### [Swift Package Manager](https://swift.org/package-manager/)
+To install it add following package to needed `Packages.swift` dependencies:
+
+```swift
+.package(url: "https://github.com/rinold/ProxyResolver.git", from: "0.3.0")
+```
+
+For example:
+```swift
+// swift-tools-version:4.0
+import PackageDescription
+
+let package = Package(
+    name: "TestPackagesForProxyResolver",
+    products: [
+        .executable(name: "TestPackagesForProxyResolver", targets: ["TestPackagesForProxyResolver"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/rinold/ProxyResolver.git", from: "0.3.0"),
+    ],
+    targets: [
+        .target(
+            name: "TestPackagesForProxyResolver",
+            dependencies: ["ProxyResolver.git"]),
+    ]
+)
+```
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/rinold/ProxyResolver/tags).
+
 ## Author
 
-ProxyResolver was initially inspired by the Starscream proxy support merge request.
+ProxyResolver was initially inspired by the web sockets  [Starscream](https://github.com/daltoniam/Starscream) proxy support [PR](https://github.com/daltoniam/Starscream/pull/202).
 
-rinold, mihail.churbanov@gmail.com
+Mikhail Churbanov, mihail.churbanov@gmail.com
 
 ## License
 
