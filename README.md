@@ -49,18 +49,54 @@ proxy.resolve(for: url) { result in
 - [ ] ~~Streaming Proxy (RTSP)~~
 - [ ] ~~Gopher Proxy~~
 
-> \*  due to ATS protection auto-configuration url should be HTTPS or have  \*.local or unresolvable globally domain, otherwise you will need to set the `NSAllowsLocalNetworking` key in plist. More info could be found in [NSAppTransportSecurity reference](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33).
+\*  due to ATS protection auto-configuration url should be HTTPS or have  \*.local or unresolvable globally domain, otherwise you will need to set the `NSAllowsLocalNetworking` key in plist. More info could be found in [NSAppTransportSecurity reference](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33).
 
 
 #### Other (TBD)
 - [x] Proxy with required password support  
-> `Proxy.credentials` will automatically access `Proxy` keychain to retrieve configured for proxy account and password. As it would require permission from user the credentials are retrieved lazily only when you try to get them.
+
+`Proxy.credentials` will automatically access `Proxy` keychain to retrieve configured for proxy account and password. As it would require permission from user the credentials are retrieved lazily only when you try to get them.
+
+---
 
 - [x] Configurable  
-> You can use custom proxy configuration provider instead of system one, or provide your own fetcher for downloading auto-configuration scripts instead of default one based on NSURLSession.
 
-- [ ] [In Progress] Aligned with Apple recommendations  
-> In general, you should try to download a URL using the first proxy in the array, try the second proxy if the first one fails, and so on.
+You can use custom proxy configuration provider instead of system one, or provide your own fetcher for downloading auto-configuration scripts instead of default one based on NSURLSession.
+
+---
+
+- [x] Aligned with Apple recommendations
+
+> "In general, you should try to download a URL using the first proxy in the array, try the second proxy if the first one fails, and so on." - as described in documentation for used  [CFNetworkCopyProxiesForURL](https://developer.apple.com/documentation/cfnetwork/1426639-cfnetworkcopyproxiesforurl) method.
+
+Using the `ProxyResolverDelegate` you can try connection to resolved proxy and in case of any issue or if your just want to retrieve all - continue resolution if any proxy configuration are still available.
+
+```swift
+class CustomDelegate: ProxyResolverDelegate {
+  func proxyResolver(_ proxyResolver: ProxyResolver, didResolve result: ProxyResolutionResult, for url: URL, resolveNext: ResolveNextRoutine?) {
+    switch result {
+    case .direct:
+      // no proxy required - try to connect to your 'url' directly
+      break
+    case .proxy(let proxy):
+      // try connect to your 'url' using resolved 'proxy'
+      yourConnectMethod(to: url, using: proxy) { (response, error) in
+        if let error = error {
+          // If connection failed we will try to resolve next proxy if
+          // available and retry connection
+          resolveNext?()
+        }
+      }
+    case .error(let error):
+      // handle error
+      break
+    }
+}
+```
+---
+- [ ] Documentation
+
+TBD
 
 ## Requirements
 - Swift: 4+
@@ -73,6 +109,12 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'ProxyResolver'
+```
+
+Using [Carthage]() add following line to your Cartfile:
+
+```ruby
+GitHub "rinold/ProxyResolver"
 ```
 
 ## Author

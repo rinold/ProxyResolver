@@ -31,6 +31,13 @@ public struct Proxy {
     }
 }
 
+// TODO: Swift 4.2 should have it auto-generated
+extension Proxy: Equatable {
+    public static func == (lhs: Proxy, rhs: Proxy) -> Bool {
+        return lhs.type == rhs.type && lhs.host == rhs.host && lhs.port == rhs.port
+    }
+}
+
 public enum ProxyResolutionResult {
     case direct
     case proxy(Proxy)
@@ -72,11 +79,22 @@ public final class ProxyResolverConfig {
     }
 }
 
+// MARK: - ProxyResolverDelegate protocol
+
+public typealias ResolveNextRoutine = () -> Void
+
+public protocol ProxyResolverDelegate: class {
+    func proxyResolver(_ proxyResolver: ProxyResolver, didResolve result: ProxyResolutionResult, for url: URL,
+                       resolveNext: ResolveNextRoutine?)
+}
+
 // MARK: - ProxyResolver class
 
 public final class ProxyResolver {
 
     private let config: ProxyResolverConfig
+
+    public weak var delegate: ProxyResolverDelegate?
 
     // MARK: Public Methods
 
@@ -86,33 +104,60 @@ public final class ProxyResolver {
 
     public func resolve(for url: URL, completion: @escaping (ProxyResolutionResult) -> Void) {
         guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
-        guard let proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
-            let firstProxyConfig = proxiesConfig.first
+        guard var proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
+            !proxiesConfig.isEmpty
         else {
             let error = ProxyResolutionError.unexpectedError(nil)
             completion(.error(error))
             return
         }
-        var i = 0
         var errors = [Error]()
         var tryNextOnErrorCompletion: ((ProxyResolutionResult) -> Void)!
         tryNextOnErrorCompletion = { result in
-            i += 1
             switch result {
             case .error(let error):
                 errors.append(error)
-                guard i < proxiesConfig.count else {
+                guard !proxiesConfig.isEmpty else {
                     let error = ProxyResolutionError.allFailed(errors)
                     completion(.error(error))
                     return
                 }
-                self.resolveProxy(from: proxiesConfig[i], for: normalizedUrl, completion: tryNextOnErrorCompletion)
+                self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: tryNextOnErrorCompletion)
 
             case .direct, .proxy:
                 completion(result)
             }
         }
-        resolveProxy(from: firstProxyConfig, for: normalizedUrl, completion: tryNextOnErrorCompletion)
+        resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: tryNextOnErrorCompletion)
+    }
+
+    public func resolve(for url: URL) {
+        guard let normalizedUrl = urlWithNormalizedSheme(from: url) else { return }
+        guard var proxiesConfig = config.configProvider.getSystemConfigProxies(for: normalizedUrl),
+            !proxiesConfig.isEmpty
+        else {
+            let error = ProxyResolutionError.unexpectedError(nil)
+            let result = ProxyResolutionResult.error(error)
+            self.delegate?.proxyResolver(self,
+                                         didResolve: result,
+                                         for: url,
+                                         resolveNext: nil)
+            return
+        }
+
+        var resolveCompletion: ((ProxyResolutionResult) -> Void)!
+        let resolveNextRoutine: ResolveNextRoutine = {
+            guard !proxiesConfig.isEmpty else { return }
+            self.resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
+        }
+        resolveCompletion = { result in
+            let resolveNext = (proxiesConfig.count < 1) ? nil : resolveNextRoutine
+            self.delegate?.proxyResolver(self,
+                                         didResolve: result,
+                                         for: url,
+                                         resolveNext: resolveNext)
+        }
+        resolveProxy(from: proxiesConfig.removeFirst(), for: normalizedUrl, completion: resolveCompletion)
     }
 
     // MARK: Internal Methods
