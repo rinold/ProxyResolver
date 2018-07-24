@@ -6,6 +6,7 @@
 //  Copyright © 2018 CocoaPods. All rights reserved.
 //
 
+import Foundation
 @testable import ProxyResolver
 
 typealias ProxyConfigDict = [CFString: AnyObject]
