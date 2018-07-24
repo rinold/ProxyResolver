@@ -116,7 +116,7 @@ public protocol ProxyResolverDelegate: class {
 
 public final class ProxyResolver {
 
-    private let config: ProxyResolverConfig
+    public var config: ProxyResolverConfig
 
     public weak var delegate: ProxyResolverDelegate?
 
