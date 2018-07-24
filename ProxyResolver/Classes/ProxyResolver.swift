@@ -21,13 +21,37 @@ public struct Credentials {
     public let password: String
 }
 
+extension Credentials {
+    public static func get(for host: String) -> Credentials? {
+        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                    kSecAttrServer as String: host,
+                                    kSecMatchLimit as String: kSecMatchLimitOne,
+                                    kSecReturnAttributes as String: true,
+                                    kSecReturnData as String: true]
+
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        guard status == errSecSuccess else { return nil }
+
+        guard let existingItem = item as? [String : Any],
+            let passwordData = existingItem[kSecValueData as String] as? Data,
+            let password = String(data: passwordData, encoding: .utf8),
+            let account = existingItem[kSecAttrAccount as String] as? String
+            else {
+                return nil
+        }
+
+        return Credentials(username: account, password: password)
+    }
+}
+
 public struct Proxy {
     public let type: ProxyType
     public let host: String
     public let port: UInt32
 
     public var credentials: Credentials? {
-        return ProxyResolver.getCredentials(for: host)
+        return Credentials.get(for: host)
     }
 }
 
@@ -92,7 +116,7 @@ public protocol ProxyResolverDelegate: class {
 
 public final class ProxyResolver {
 
-    private let config: ProxyResolverConfig
+    public var config: ProxyResolverConfig
 
     public weak var delegate: ProxyResolverDelegate?
 
@@ -282,28 +306,6 @@ public final class ProxyResolver {
         }
         urlComponents.scheme = config.shemeNormalizationRules[scheme] ?? scheme
         return urlComponents.url
-    }
-
-    class func getCredentials(for host: String) -> Credentials? {
-        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
-                                    kSecAttrServer as String: host,
-                                    kSecMatchLimit as String: kSecMatchLimitOne,
-                                    kSecReturnAttributes as String: true,
-                                    kSecReturnData as String: true]
-
-        var item: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status == errSecSuccess else { return nil }
-
-        guard let existingItem = item as? [String : Any],
-            let passwordData = existingItem[kSecValueData as String] as? Data,
-            let password = String(data: passwordData, encoding: .utf8),
-            let account = existingItem[kSecAttrAccount as String] as? String
-        else {
-            return nil
-        }
-
-        return Credentials(username: account, password: password)
     }
 
 }

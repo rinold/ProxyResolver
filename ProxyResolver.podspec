@@ -8,14 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ProxyResolver'
-  s.version          = '0.3.0'
+  s.version          = '0.3.1'
   s.summary          = 'Simple resolution of user proxy settings for macOS'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
   ProxyResolver allows simply resolve the actual proxy information from users
@@ -24,13 +18,12 @@ Pod::Spec.new do |s|
                        DESC
 
   s.homepage         = 'https://github.com/rinold/ProxyResolver'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'rinold' => 'mihail.churbanov@gmail.com' }
   s.source           = { :git => 'https://github.com/rinold/ProxyResolver.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.social_media_url = 'https://twitter.com/rinold_nn'
 
-  s.platform = :osx
+  s.ios.deployment_target = "10.0"
   s.osx.deployment_target = "10.10"
 
   s.source_files = 'ProxyResolver/Classes/**/*'
